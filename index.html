@@ -1,0 +1,111 @@
+<!-- # Dylan Kenneth Eliot, claude 3.5, GPT-4o-mini, & google-gemini-->
+
+<!-- 
+
+Much to my own disbelief, it works even in w3schools.
+
+
+-->
+
+
+
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython_stdlib.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <title>Brython Controlling React</title>
+</head>
+<body onload="brython()">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Define React components
+        const Button = ({ onClick, children }) => (
+            <button 
+                onClick={onClick}
+                style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                }}
+            >
+                {children}
+            </button>
+        );
+
+        const Output = ({ text }) => (
+            <div
+                style={{
+                    marginTop: '20px',
+                    padding: '15px',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px'
+                }}
+            >
+                {text}
+            </div>
+        );
+
+        const App = ({ onButtonClick, outputText }) => (
+            <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+                <h1>Brython Controlling React</h1>
+                <Button onClick={onButtonClick}>Click Me</Button>
+                <Output text={outputText} />
+            </div>
+        );
+
+        // Make components available globally
+        window.ReactComponents = {
+            App,
+            Button,
+            Output
+        };
+    </script>
+
+    <script type="text/python">
+from browser import document, window
+import javascript
+
+React = window.React
+ReactDOM = window.ReactDOM
+createElement = React.createElement
+components = window.ReactComponents
+
+class BrythonController:
+    def __init__(self):
+        self.output_text = "Output will appear here"
+        self.render()
+    
+    def handle_click(self, event):
+        self.output_text = "Button clicked! Controlled by Python"
+        self.render()
+    
+    def render(self):
+        # Create props for App component
+        props = {
+            "onButtonClick": self.handle_click,
+            "outputText": self.output_text
+        }
+        
+        # Create React element
+        app = createElement(
+            components.App,
+            props
+        )
+        
+        # Render to DOM
+        ReactDOM.render(app, document.getElementById("root"))
+
+# Initialize controller
+controller = BrythonController()
+    </script>
+</body>
+</html>
