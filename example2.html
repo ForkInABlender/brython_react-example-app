@@ -1,0 +1,93 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython_stdlib.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.0/umd/react-dom.development.js"></script>
+    <title>Brython Controlling React</title>
+</head>
+<body onload="brython()">
+    <div id="root"></div>
+
+    <script type="text/python">
+from browser import document, window
+import javascript
+
+# Get React and ReactDOM
+React = window.React
+ReactDOM = window.ReactDOM
+createElement = React.createElement
+
+# Define Button component
+def Button(props):
+    return createElement(
+        "button",
+        {
+            "onClick": props["onClick"],
+            "style": javascript.JSObject({
+                "padding": "10px 20px",
+                "backgroundColor": "#4CAF50",
+                "color": "white",
+                "border": "none",
+                "borderRadius": "4px",
+                "cursor": "pointer"
+            })
+        },
+        props["children"]
+    )
+
+# Define Output component
+def Output(props):
+    return createElement(
+        "div",
+        {
+            "style": javascript.JSObject({
+                "marginTop": "20px",
+                "padding": "15px",
+                "border": "1px solid #ddd",
+                "borderRadius": "4px"
+            })
+        },
+        props["text"]
+    )
+
+# Define App component
+def App(props):
+    return createElement(
+        "div",
+        {
+            "style": javascript.JSObject({
+                "maxWidth": "800px",
+                "margin": "0 auto",
+                "padding": "20px"
+            })
+        },
+        createElement("h1", None, "Brython Controlling React"),
+        Button({"onClick": props["onButtonClick"], "children": "Click Me"}),
+        Output({"text": props["outputText"]})
+    )
+
+# Brython Controller
+class BrythonController:
+    def __init__(self):
+        self.state = {"output_text": "Output will appear here"}
+        self.render()
+    
+    def handle_click(self, event):
+        self.state["output_text"] = "Button clicked! Controlled by Python"
+        self.render()
+    
+    def render(self):
+        props = javascript.JSObject({
+            "onButtonClick": self.handle_click,
+            "outputText": self.state["output_text"]
+        })
+        app = App(props)
+        ReactDOM.render(app, document["root"])
+
+# Initialize the controller
+controller = BrythonController()
+    </script>
+</body>
+</html>
